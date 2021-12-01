@@ -57,7 +57,6 @@ handler.delete(async (req, res) => {
       .status(404)
       .send({ message: 'Product Not Found', statusMessage: 'warning' });
   }
-  res.send(product);
 });
 
 export default handler;
