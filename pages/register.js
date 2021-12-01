@@ -10,7 +10,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import React, { useContext, useEffect } from 'react';
 import useStyles from '../utils/styles';
-import Layout from './components/Layout';
+import Layout from '../components/Layout';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { Store } from '../utils/Store';
