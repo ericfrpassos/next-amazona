@@ -51,7 +51,6 @@ handler.delete(async (req, res) => {
       .status(404)
       .send({ message: 'User Not Found', statusMessage: 'warning' });
   }
-  res.send(user);
 });
 
 export default handler;
