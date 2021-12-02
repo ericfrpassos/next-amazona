@@ -1,9 +1,8 @@
 import bcrypt from 'bcryptjs';
-
 const data = {
   users: [
     {
-      name: 'Eric',
+      name: 'Eric Passos',
       email: 'eric.rosa.passos@gmail.com',
       password: bcrypt.hashSync('123456'),
       isAdmin: true,
@@ -15,11 +14,13 @@ const data = {
       slug: 'free-shirt',
       category: 'Shirts',
       image: '/images/shirt1.jpg',
+      isFeatured: true,
+      featuredImage: '/images/banner1.jpg',
       price: 70,
       brand: 'Nike',
       rating: 4.5,
       numReviews: 10,
-      countInStock: 10,
+      countInStock: 20,
       description: 'A popular shirt',
     },
     {
@@ -27,11 +28,13 @@ const data = {
       slug: 'fit-shirt',
       category: 'Shirts',
       image: '/images/shirt2.jpg',
+      isFeatured: true,
+      featuredImage: '/images/banner2.jpg',
       price: 80,
       brand: 'Adidas',
       rating: 4.2,
       numReviews: 10,
-      countInStock: 10,
+      countInStock: 20,
       description: 'A popular shirt',
     },
     {
@@ -43,7 +46,7 @@ const data = {
       brand: 'Raymond',
       rating: 4.5,
       numReviews: 10,
-      countInStock: 10,
+      countInStock: 20,
       description: 'A popular shirt',
     },
     {
@@ -55,7 +58,7 @@ const data = {
       brand: 'Oliver',
       rating: 4.5,
       numReviews: 10,
-      countInStock: 10,
+      countInStock: 20,
       description: 'Smart looking pants',
     },
     {
@@ -67,7 +70,7 @@ const data = {
       brand: 'Zara',
       rating: 4.5,
       numReviews: 10,
-      countInStock: 10,
+      countInStock: 20,
       description: 'A popular pants',
     },
     {
@@ -79,10 +82,9 @@ const data = {
       brand: 'Casely',
       rating: 4.5,
       numReviews: 10,
-      countInStock: 10,
+      countInStock: 20,
       description: 'A popular pants',
     },
   ],
 };
-
 export default data;

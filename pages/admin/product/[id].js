@@ -2,19 +2,20 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
-import React, { useEffect, useContext, useReducer } from 'react';
+import React, { useEffect, useContext, useReducer, useState } from 'react';
 import {
-  Typography,
   Grid,
   List,
   ListItem,
+  Typography,
   Card,
   Button,
   ListItemText,
   TextField,
   CircularProgress,
+  FormControlLabel,
+  Checkbox,
 } from '@material-ui/core';
-
 import { getError } from '../../../utils/error';
 import { Store } from '../../../utils/Store';
 import Layout from '../../../components/Layout';
@@ -39,18 +40,23 @@ function reducer(state, action) {
     case 'UPLOAD_REQUEST':
       return { ...state, loadingUpload: true, errorUpload: '' };
     case 'UPLOAD_SUCCESS':
-      return { ...state, loadingUpload: false, errorUpload: '' };
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: '',
+      };
     case 'UPLOAD_FAIL':
       return { ...state, loadingUpload: false, errorUpload: action.payload };
+
     default:
-      state;
+      return state;
   }
 }
 
 function ProductEdit({ params }) {
   const productId = params.id;
   const { state } = useContext(Store);
-  const [{ loading, loadingUpdate, loadingUpload, error }, dispatch] =
+  const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: '',
@@ -81,20 +87,20 @@ function ProductEdit({ params }) {
           setValue('slug', data.slug);
           setValue('price', data.price);
           setValue('image', data.image);
+          setValue('featuredImage', data.featuredImage);
+          setIsFeatured(data.isFeatured);
           setValue('category', data.category);
           setValue('brand', data.brand);
           setValue('countInStock', data.countInStock);
           setValue('description', data.description);
         } catch (err) {
           dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
-          enqueueSnackbar(getError(err), { variant: 'error' });
         }
       };
       fetchData();
     }
   }, []);
-
-  const uploadHandler = async (e) => {
+  const uploadHandler = async (e, imageField = 'image') => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
     bodyFormData.append('file', file);
@@ -107,8 +113,8 @@ function ProductEdit({ params }) {
         },
       });
       dispatch({ type: 'UPLOAD_SUCCESS' });
-      setValue('image', data.secure_url);
-      enqueueSnackbar(data.message, { variant: data.statusMessage });
+      setValue(imageField, data.secure_url);
+      enqueueSnackbar('File uploaded successfully', { variant: 'success' });
     } catch (err) {
       dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
       enqueueSnackbar(getError(err), { variant: 'error' });
@@ -119,40 +125,43 @@ function ProductEdit({ params }) {
     name,
     slug,
     price,
-    image,
     category,
+    image,
+    featuredImage,
     brand,
     countInStock,
     description,
   }) => {
     closeSnackbar();
-
     try {
       dispatch({ type: 'UPDATE_REQUEST' });
-      const { data } = await axios.put(
+      await axios.put(
         `/api/admin/products/${productId}`,
         {
           name,
           slug,
           price,
-          image,
           category,
+          image,
+          isFeatured,
+          featuredImage,
           brand,
           countInStock,
           description,
         },
-        {
-          headers: { authorization: `Bearer ${userInfo.token}` },
-        }
+        { headers: { authorization: `Bearer ${userInfo.token}` } }
       );
       dispatch({ type: 'UPDATE_SUCCESS' });
-      enqueueSnackbar(data.message, { variant: data.statusMessage });
+      enqueueSnackbar('Product updated successfully', { variant: 'success' });
       router.push('/admin/products');
     } catch (err) {
       dispatch({ type: 'UPDATE_FAIL', payload: getError(err) });
       enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
+
+  const [isFeatured, setIsFeatured] = useState(false);
+
   return (
     <Layout title={`Edit Product ${productId}`}>
       <Grid container spacing={1}>
@@ -190,7 +199,7 @@ function ProductEdit({ params }) {
                   Edit Product {productId}
                 </Typography>
               </ListItem>
-              <ListItem className={classes.alignItemsAndJustifyContent}>
+              <ListItem>
                 {loading && <CircularProgress></CircularProgress>}
                 {error && (
                   <Typography className={classes.error}>{error}</Typography>
@@ -288,8 +297,54 @@ function ProductEdit({ params }) {
                     </ListItem>
                     <ListItem>
                       <Button variant="contained" component="label">
-                        Upload file
+                        Upload File
                         <input type="file" onChange={uploadHandler} hidden />
+                      </Button>
+                      {loadingUpload && <CircularProgress />}
+                    </ListItem>
+                    <ListItem>
+                      <FormControlLabel
+                        label="Is Featured"
+                        control={
+                          <Checkbox
+                            onClick={(e) => setIsFeatured(e.target.checked)}
+                            checked={isFeatured}
+                            name="isFeatured"
+                          />
+                        }
+                      ></FormControlLabel>
+                    </ListItem>
+                    <ListItem>
+                      <Controller
+                        name="featuredImage"
+                        control={control}
+                        defaultValue=""
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field }) => (
+                          <TextField
+                            variant="outlined"
+                            fullWidth
+                            id="featuredImage"
+                            label="Featured Image"
+                            error={Boolean(errors.image)}
+                            helperText={
+                              errors.image ? 'Featured Image is required' : ''
+                            }
+                            {...field}
+                          ></TextField>
+                        )}
+                      ></Controller>
+                    </ListItem>
+                    <ListItem>
+                      <Button variant="contained" component="label">
+                        Upload File
+                        <input
+                          type="file"
+                          onChange={(e) => uploadHandler(e, 'featuredImage')}
+                          hidden
+                        />
                       </Button>
                       {loadingUpload && <CircularProgress />}
                     </ListItem>
@@ -350,11 +405,11 @@ function ProductEdit({ params }) {
                             variant="outlined"
                             fullWidth
                             id="countInStock"
-                            label="countInStock"
+                            label="Count in stock"
                             error={Boolean(errors.countInStock)}
                             helperText={
                               errors.countInStock
-                                ? 'CountInStock is required'
+                                ? 'Count in stock is required'
                                 : ''
                             }
                             {...field}
@@ -388,17 +443,16 @@ function ProductEdit({ params }) {
                         )}
                       ></Controller>
                     </ListItem>
+
                     <ListItem>
                       <Button
                         variant="contained"
-                        fullWidth
                         type="submit"
+                        fullWidth
                         color="primary"
                       >
                         Update
                       </Button>
-                    </ListItem>
-                    <ListItem className={classes.alignItemsAndJustifyContent}>
                       {loadingUpdate && <CircularProgress />}
                     </ListItem>
                   </List>
@@ -413,7 +467,9 @@ function ProductEdit({ params }) {
 }
 
 export async function getServerSideProps({ params }) {
-  return { props: { params } };
+  return {
+    props: { params },
+  };
 }
 
 export default dynamic(() => Promise.resolve(ProductEdit), { ssr: false });
