@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
   },
   footer: {
     marginTop: 10,
-    marginBottom: 10,
     textAlign: 'center',
   },
   section: {
@@ -36,11 +35,11 @@ const useStyles = makeStyles((theme) => ({
     color: '#ffffff',
     textTransform: 'initial',
   },
-  transparentBackground: {
+  transparentBackgroud: {
     backgroundColor: 'transparent',
   },
   error: {
-    color: '#F04040',
+    color: '#f04040',
   },
   fullWidth: {
     width: '100%',
@@ -57,10 +56,9 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     justifyContent: 'space-between',
   },
-  menuButton: {
-    padding: 0,
-  },
-  //search
+  menuButton: { padding: 0 },
+  mt1: { marginTop: '1rem' },
+  // search
   searchSection: {
     display: 'none',
     [theme.breakpoints.up('md')]: {
@@ -80,19 +78,36 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   iconButton: {
-    backgroundColor: '#f8c440',
+    backgroundColor: '#f8c040',
     padding: 5,
     borderRadius: '0 5px 5px 0',
     '& span': {
       color: '#000000',
     },
   },
+  sort: {
+    marginRight: 5,
+  },
+
+  fullContainer: { height: '100vh' },
+  mapInputBox: {
+    position: 'absolute',
+    display: 'flex',
+    left: 0,
+    right: 0,
+    margin: '10px auto',
+    width: 300,
+    height: 40,
+    '& input': {
+      width: 250,
+    },
+  },
   alignItemsAndJustifyContent: {
+    marginTop: '1rem',
     width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
 }));
-
 export default useStyles;
