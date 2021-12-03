@@ -102,12 +102,5 @@ const useStyles = makeStyles((theme) => ({
       width: 250,
     },
   },
-  alignItemsAndJustifyContent: {
-    marginTop: '1rem',
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 }));
 export default useStyles;

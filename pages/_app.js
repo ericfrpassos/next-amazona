@@ -2,6 +2,7 @@ import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { SnackbarProvider } from 'notistack';
 import { useEffect } from 'react';
 import '../styles/globals.css';
+import '../components/Carousel/carousel.css';
 import { StoreProvider } from '../utils/Store';
 
 function MyApp({ Component, pageProps }) {

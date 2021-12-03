@@ -1,6 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import NextLink from 'next/link';
-import { Grid, Link, Typography } from '@material-ui/core';
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Grid,
+  Link,
+  Typography,
+} from '@material-ui/core';
 import Layout from '../components/Layout';
 import db from '../utils/db';
 import Product from '../models/Product';
@@ -9,8 +17,9 @@ import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import { Store } from '../utils/Store';
 import ProductItem from '../components/ProductItem';
-import Carousel from 'react-material-ui-carousel';
+import Carousel from '../components/Carousel';
 import useStyles from '../utils/styles';
+import NoSsr from '@material-ui/core/NoSsr';
 
 export default function Home(props) {
   const classes = useStyles();
@@ -30,23 +39,28 @@ export default function Home(props) {
   };
   return (
     <Layout>
-      <Carousel className={classes.mt1} animation="slide">
-        {featuredProducts.map((product) => (
-          <NextLink
-            key={product._id}
-            href={`/product/${product.slug}`}
-            passHref
-          >
-            <Link>
-              <img
-                src={product.featuredImage}
-                alt={product.name}
-                className={classes.featuredImage}
-              ></img>
-            </Link>
-          </NextLink>
-        ))}
-      </Carousel>
+      <Typography variant="h2">Highlights</Typography>
+      <NoSsr>
+        <Carousel show={4}>
+          {featuredProducts.map((product) => (
+            <NextLink
+              key={product._id}
+              href={`/product/${product.slug}`}
+              passHref
+            >
+              <Card>
+                <CardActionArea width="300" height="300">
+                  <CardMedia
+                    component="img"
+                    image={product.featuredImage}
+                    title={product.name}
+                  />
+                </CardActionArea>
+              </Card>
+            </NextLink>
+          ))}
+        </Carousel>
+      </NoSsr>
       <Typography variant="h2">Popular Products</Typography>
       <Grid container spacing={3}>
         {topRatedProducts.map((product) => (
@@ -69,7 +83,7 @@ export async function getServerSideProps() {
     '-reviews'
   )
     .lean()
-    .limit(3);
+    .limit(8);
   const topRatedProductsDocs = await Product.find({}, '-reviews')
     .lean()
     .sort({
